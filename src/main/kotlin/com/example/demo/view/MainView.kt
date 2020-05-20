@@ -62,57 +62,12 @@ class DemoTableView : View() {
 }
 
 
-/*class HackView : View() {
-
-    private val cells = listOf(
-           Cell(), Cell(), Cell(), Cell(), Cell(), Cell(), Cell(), Cell(), Cell(), Cell(),
-            Cell(), Cell(), Cell(), Cell(), Cell(), Cell(), Cell(), Cell(), Cell(), Cell(),
-            Cell(), Cell(), Cell(), Cell(), Cell(), Cell(), Cell(), Cell(), Cell(true), Cell()
-    ).observable()
-
-    override val root = tableview(cells) {
-        readonlyColumn("", Cell::isPressed)
-        readonlyColumn("", Cell::isPressed)
-        readonlyColumn("", Cell::isPressed)
-        readonlyColumn("", Cell::isPressed)
-        readonlyColumn("", Cell::isPressed)
-        readonlyColumn("", Cell::isPressed)
-        readonlyColumn("", Cell::isPressed)
-        readonlyColumn("", Cell::isPressed)
-        readonlyColumn("", Cell::isPressed)
-        readonlyColumn("", Cell::isPressed)
-        readonlyColumn("", Cell::isPressed)
-        readonlyColumn("", Cell::isPressed)
-        readonlyColumn("", Cell::isPressed)
-        readonlyColumn("", Cell::isPressed)
-        readonlyColumn("", Cell::isPressed)
-        readonlyColumn("", Cell::isPressed)
-        readonlyColumn("", Cell::isPressed)
-        readonlyColumn("", Cell::isPressed)
-        readonlyColumn("", Cell::isPressed).cellFormat{
-            text = it.toString()
-            style {
-                if (it != true) {
-                    backgroundColor += c("#000000")
-                    textFill = Color.BLACK
-                }
-                else{
-                    backgroundColor += c("#FFFFFF")
-                    textFill = Color.WHITE
-                }
-            }
-        }
-
-    }
-}*/
 
 class GuideView : View() {
 
     override val root = VBox()
     val WORLD_SIZE = 5
     val world = World(WORLD_SIZE, WORLD_SIZE)
-
-
 
     init {
         world.setup()
@@ -125,13 +80,7 @@ class GuideView : View() {
                             val y = i
                             this.isSelected = false
                             action {
-                                //text = if (isSelected) "" else "O"
-                                isSelected = this.isSelected
-                                println("Clicked button, Setting $x $y to $isSelected")
                                 world.setCell(x,y,this.isSelected)
-
-                                //print(pressedProperty())
-                                //print(world.state)
                             }
                             setPrefSize(30.0, 30.0)
                         }
@@ -147,8 +96,11 @@ class GuideView : View() {
     }
 
     fun step(){
-        println("UI stepping")
+        //println("UI stepping")
         //println("Stepping")
+        //world.printState()
+        world.step()
+
         var boxes = root.getChildList()
         boxes?.forEach {
             val outerSize = boxes.size
@@ -157,16 +109,20 @@ class GuideView : View() {
                 val innerSize = childList?.size
                 for (j in 0..innerSize!!-1){
                     val toggleButton = childList?.get(j) as? ToggleButton ?: return
-                    //println(toggleButton.getChildList()?.get(0)?.toString())
-                    println(world.isCellAlive(i,j))
+                    //print(world.isCellAlive(i,j))
                     toggleButton.isSelected = world.isCellAlive(i,j)
+
+                    //println(toggleButton.getChildList()?.get(0)?.toString())
+                    //println(world.isCellAlive(i,j))
                     //println("$i $j")
                     //exitProcess(1)
                     //print(toggleButton.text)
                     //toggleButton.isSelected = false
                 }
             }
+
         }
+        world.printState()
         //val toggleButton = root.getChildList()?.get(0)?.getChildList()?.get(0) as? ToggleButton ?: return
         //toggleButton.isSelected = false
     }
