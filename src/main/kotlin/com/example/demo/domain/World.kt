@@ -1,66 +1,60 @@
 package com.example.demo.domain
 
 class World(val size_x: Int = 30, val size_y: Int = 30) {
-    lateinit var cells: Array<Array<Cell>>
+    lateinit var cells: Array<Array<Boolean>>
 
     fun setup(){
-        //println("World setting up")
         cells = Array(size_x) {
             Array(size_y) {
-                Cell(false,0,0, this)
-            }
-        }
-
-        for(i in 0..size_x-1){
-            for(j in 0..size_y-1){
-                cells[i][j] = Cell(false,i,j, this)
+                false
             }
         }
     }
 
-    fun isCellAlive(x: Int, y: Int) : Boolean{
-        //println("Checking if $x $y is alive: $alive ")
-        if (x >= 0 && y >= 0 && x < size_x-1 && y < size_y-1) {
-            return cells[x][y].isAlive
+    fun getValidNeighboursCount(x: Int, y: Int): Int{
+        var neighbours = 0
+        for (i in x-1..x+1){
+            for (j in y-1..y+1){
+                if(!((i == x && j == y) || i<0 || i>=size_x || j<0 || j>=size_y)){
+                    val size = cells.size
+                    if (cells[i][j]){
+                        neighbours+=1
+                    }
+                }
+            }
         }
-        else{
-            return false
-        }
+        return neighbours
     }
 
     fun step(){
         var newCells = Array(size_x) {
             Array(size_y) {
-                Cell(false,0,0, this)
+               false
             }
         }
 
         for(i in 0..size_x-1){
             for(j in 0..size_y-1){
-                val isAlive = cells[i][j].returnAliveAfterStep()
-                //"New cell $i $j will be $isAlive"
-                newCells[i][j] = Cell(this.isCellAlive(i,j),i,j, this)
+                // Any dead cell with three live neighbours becomes a live cell.
+                if (!cells[i][j]){
+                    if (getValidNeighboursCount(i,j) == 3){
+                        newCells[i][j] = true
+                    }
+                }
+
+                // Any live cell with two or three live neighbours survives.
+                //All other live cells die in the next generation. Similarly, all other dead cells stay dead.
+                if (cells[i][j]){
+                    if  ((getValidNeighboursCount(i,j) == 2 || getValidNeighboursCount(i,j) == 3)){
+                        newCells[i][j] = true
+                    }
+                }
             }
         }
         cells = newCells
     }
 
     fun setCell(x: Int, y: Int, isAlive: Boolean){
-        cells[x][y].isAlive = isAlive
-    }
-
-    fun printState(){
-        for (i in 0..cells.size-1){
-            for (j in 0..cells.size-1){
-                if (cells[i][j].isAlive){
-                    print("1 ")
-                }
-                else {
-                    print("0 ")
-                }
-            }
-            println("")
-        }
-        println("--------------------------------------")
+        cells[x][y] = isAlive
     }
 }

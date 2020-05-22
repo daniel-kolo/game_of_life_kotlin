@@ -1,10 +1,9 @@
 package com.example.demo.app
 
+import javafx.scene.paint.Color
 import javafx.scene.text.FontWeight
-import tornadofx.Stylesheet
-import tornadofx.box
-import tornadofx.cssclass
-import tornadofx.px
+import tornadofx.*
+
 
 class Styles : Stylesheet() {
     companion object {
